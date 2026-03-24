@@ -1,0 +1,122 @@
+/* style.css */
+
+/* 1. Base Setup */
+body {
+    background-color: #0d0d0d;
+    color: #00ff41; /* Classic Matrix/Terminal Green */
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    text-transform: uppercase;
+}
+
+/* 2. Layout Containers */
+#setup-screen, #main-ui, #permission-guide {
+    text-align: center;
+    border: 2px solid #00ff41;
+    padding: 40px;
+    background: rgba(0, 255, 65, 0.05);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+}
+
+#main-ui, #permission-guide {
+    display: none; /* Controlled by your JS */
+}
+
+/* 3. The Break Overlay (Emergency Style) */
+.break-overlay {
+    display: none; /* Controlled by your JS */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #aa0000;
+    color: white;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: flash 1s infinite;
+}
+
+@keyframes flash {
+    0% { background-color: #aa0000; }
+    50% { background-color: #ff0000; }
+    100% { background-color: #aa0000; }
+}
+
+/* 4. Typography & UI Elements */
+h1 {
+    font-size: 2rem;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+}
+
+.timer {
+    font-size: 5rem;
+    font-weight: bold;
+    margin: 20px 0;
+    text-shadow: 0 0 10px #00ff41;
+}
+
+#break-overlay .timer {
+    text-shadow: 0 0 15px #ffffff;
+}
+
+button {
+    background: transparent;
+    color: #00ff41;
+    border: 2px solid #00ff41;
+    padding: 15px 30px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover {
+    background: #00ff41;
+    color: #0d0d0d;
+    box-shadow: 0 0 15px #00ff41;
+}
+
+/* 5. Permission Guide Arrow */
+#permission-guide {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    border: none;
+    background: transparent;
+}
+
+.pointing-arrow {
+    font-size: 4rem;
+    display: inline-block;
+    
+    /* 1. Set the direction (Point Right) */
+    /* Adjust this value until it points perfectly horizontal */
+    rotate: 135deg; 
+
+    /* 2. Move 40px to the left of its original position */
+    position: relative;
+    left: -40px; 
+
+    /* 3. The Animation */
+    animation: slide-right-left 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes slide-right-left {
+    from { 
+        /* Start position */
+        translate: 0px 0px; 
+    }
+    to { 
+        /* Move 20px further to the right horizontally */
+        translate: 20px 0px; 
+    }
+}

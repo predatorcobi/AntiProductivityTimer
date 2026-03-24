@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Nag - GitHub Edition</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+    <div id="permission-guide">
+        <span class="pointing-arrow">↖</span>
+        <p>CLICK ALLOW HERE!</p>
+    </div>
+
+    <div id="setup-screen">
+        <h1>ANTI-PRODUCTIVITY PROTOCOL</h1>
+        <p>Phase: Initialization</p>
+        <br>
+        <button onclick="initSystem()">ACTIVATE SENSOR</button>
+    </div>
+
+    <div id="main-ui">
+        <h2>REMAIN PRODUCTIVE</h2>
+        <div class="timer" id="timer-display">00:15</div>
+    </div>
+
+    <div id="break-overlay" class="break-overlay">
+        <h1>! BREAK ENFORCEMENT !</h1>
+        <p>DO NOT LEAVE THIS PAGE.</p>
+        <div class="timer" id="break-display">00:10</div>
+    </div>
+
+    <script>
+        let timeLeft = 15;
+        let nagCounter = 0; 
+        let isBreak = false;
+        let audioCtx = null;
+
+        function initSystem() {
+            // Show the moving arrow immediately
+            document.getElementById('permission-guide').style.display = 'block';
+
+            Notification.requestPermission().then(permission => {
+                // Hide arrow once they've made a choice
+                document.getElementById('permission-guide').style.display = 'none';
+                
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                document.getElementById('setup-screen').style.display = 'none';
+                document.getElementById('main-ui').style.display = 'block';
+                
+                startLogic();
+            });
+        }
+
+        function playBeep(freq = 440) {
+            if(!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = freq;
+            osc.start();
+            // Quick fade out so it sounds like a "blip"
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function sendNotification() {
+            if (Notification.permission === "granted") {
+                new Notification("🚨 GET BACK HERE", {
+                    body: "Your break is being paused because you left the tab!",
+                    requireInteraction: true 
+                });
+            }
+        }
+
+        function startLogic() {
+            setInterval(() => {
+                if (!isBreak) {
+                    timeLeft--;
+                    document.getElementById('timer-display').innerText = `00:${timeLeft.toString().padStart(2, '0')}`;
+                    if (timeLeft <= 0) triggerBreak();
+                } else {
+                    if (document.hidden) {
+                        nagCounter++;
+                        
+                        // Increase pitch every second they are gone (start at 440Hz, add 100Hz each second)
+                        let annoyingPitch = 440 + (nagCounter * 100);
+                        playBeep(annoyingPitch);
+
+                        if (nagCounter === 7) {
+                            sendNotification();
+                        }
+                        return; 
+                    }
+
+                    // Reset nag if they return
+                    nagCounter = 0; 
+                    timeLeft--;
+                    document.getElementById('break-display').innerText = `00:${timeLeft.toString().padStart(2, '0')}`;
+                    
+                    if (timeLeft <= 0) {
+                        isBreak = false;
+                        timeLeft = 15;
+                        document.getElementById('break-overlay').style.display = 'none';
+                        playBeep(200); // Low "success" beep
+                    }
+                }
+            }, 1000);
+        }
+
+        function triggerBreak() {
+            isBreak = true;
+            timeLeft = 10;
+            document.getElementById('break-overlay').style.display = 'flex';
+            playBeep(800);
+        }
+    </script>
+</body>
+</html>
