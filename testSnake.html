@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Minigame</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #4ade80;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: opacity 0.2s;
+        }
+
+        button#stop-btn {
+            background: #ff4d4d;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        #game-stage {
+            width: 100%;
+            height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <button onclick="startMinigame()">Start Snake</button>
+        <button id="stop-btn" onclick="stopMinigame()">Stop Game</button>
+    </div>
+
+    <div id="game-stage"></div>
+
+    <script>
+        // Mock playBeep function to prevent errors since it's called in snake.js
+        function playBeep(frequency) {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        }
+    </script>
+
+    <script src="snake.js"></script>
+
+</body>
+</html>
